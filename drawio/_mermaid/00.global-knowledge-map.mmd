@@ -1,0 +1,95 @@
+%% CPP-NOTES Global Knowledge Map (Module 00)
+%% Bird's-eye view: 8 modules + all major sub-clusters; node count > 40
+graph TD
+    root["C++ 现代编程知识图谱 (CPP-NOTES)"]
+
+    %% 8 modules
+    M01["01 类型系统 (Type System)"]
+    M02["02 语句与控制流 (Statements)"]
+    M03["03 容器与字符串 (Containers)"]
+    M04["04 函数与算法 (Functions & Algorithms)"]
+    M05["05 内存与 IO (Memory & I/O)"]
+    M06["06 类与面向对象 (Classes & OOP)"]
+    M07["07 模板与元编程 (Templates & Meta)"]
+    M08["08 现代工具链 (Modern Toolchain)"]
+
+    root --> M01
+    root --> M02
+    root --> M03
+    root --> M04
+    root --> M05
+    root --> M06
+    root --> M07
+    root --> M08
+
+    %% 01 Type System
+    M01 --> T_built["内建类型 (int/float/bool/char)"]
+    M01 --> T_cv["cv 限定 (const/constexpr/consteval)"]
+    M01 --> T_ref["引用与指针 (& / *)"]
+    M01 --> T_auto["自动推导 (auto/decltype)"]
+    M01 --> T_cast["命名转换 (static/dynamic/reinterpret/const_cast)"]
+    M01 --> T_space["三路比较 (<=>)"]
+
+    %% 02 Statements
+    M02 --> S_branch["分支 (if/switch)"]
+    M02 --> S_loop["循环 (for/while/range-for)"]
+    M02 --> S_ifc["if constexpr / if consteval"]
+    M02 --> S_init["初始化语句 (C++17/20)"]
+
+    %% 03 Containers
+    M03 --> C_seq["序列容器 (vector/list/deque/array)"]
+    M03 --> C_assoc["关联容器 (map/set + unordered)"]
+    M03 --> C_str["字符串与视图 (string/string_view/span)"]
+    M03 --> C_iter["迭代器分类 (input..contiguous)"]
+
+    %% 04 Functions & Algorithms
+    M04 --> F_overload["重载与 ADL"]
+    M04 --> F_lambda["Lambda 与闭包"]
+    M04 --> F_func["std::function / bind"]
+    M04 --> F_algo["泛型算法 (<algorithm>)"]
+    M04 --> F_exec["并行策略 (<execution>)"]
+    M04 --> F_rng["ranges (C++20)"]
+
+    %% 05 Memory & IO
+    M05 --> Mm_new["new/delete + placement new"]
+    M05 --> Mm_sp["智能指针 (unique/shared/weak)"]
+    M05 --> Mm_alloc["分配器 (allocator/pmr)"]
+    M05 --> Mm_io["流类层次 (basic_istream/ostream)"]
+    M05 --> Mm_fmt["格式化 (<iomanip>/<format>)"]
+    M05 --> Mm_chrono["计时 (<chrono>)"]
+
+    %% 06 Classes
+    M06 --> O_ctor["构造/析构/拷贝/移动"]
+    M06 --> O_inh["继承 / 虚函数 / 抽象类"]
+    M06 --> O_op["运算符重载"]
+    M06 --> O_rtti["RTTI / dynamic_cast / typeid"]
+    M06 --> O_special["特殊成员合成 (=default/=delete)"]
+
+    %% 07 Templates & Meta
+    M07 --> Tpl_fc["函数/类模板 + CTAD"]
+    M07 --> Tpl_spec["特化与偏特化"]
+    M07 --> Tpl_var["变长模板与折叠表达式"]
+    M07 --> Tpl_sfin["SFINAE / enable_if / void_t"]
+    M07 --> Tpl_cn["concept / requires (C++20)"]
+    M07 --> Tpl_tt["<type_traits> 与 TMP"]
+    M07 --> Tpl_misc["异常 / 枚举 / 联合 / 命名空间"]
+
+    %% 08 Toolchain
+    M08 --> Tc_std["C++17/20/23 特性索引"]
+    M08 --> Tc_cmp["编译器 (gcc/clang/MSVC)"]
+    M08 --> Tc_gb["godbolt / cppinsights"]
+    M08 --> Tc_build["构建 (CMake/ninja)"]
+    M08 --> Tc_san["sanitizers / clang-tidy"]
+    M08 --> Tc_mod["modules / coroutine / ranges 速查"]
+
+    %% Cross-module bridges (key concepts spanning modules)
+    T_ref -. "驱动" .-> Mm_sp
+    T_auto -. "推导" .-> Tpl_fc
+    T_space -. "实现于" .-> O_op
+    O_ctor -. "实现 RAII" .-> Mm_sp
+    F_lambda -. "类型擦除" .-> F_func
+    F_algo -. "操作" .-> C_seq
+    Tpl_cn -. "约束" .-> F_algo
+    Tpl_misc -. "异常安全" .-> O_ctor
+    Tc_std -. "贯穿" .-> M01
+    Tc_std -. "贯穿" .-> M07

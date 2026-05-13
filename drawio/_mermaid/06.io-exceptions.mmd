@@ -1,0 +1,58 @@
+%% Module 06 · IO 与异常 (IO & Exceptions) — chapters 07, 15
+graph TD
+    root["IO 与异常 (IO & Exceptions)"]
+
+    root --> ioh["流类层次 (Stream Hierarchy)"]
+    ioh --> ib["std::ios_base"]
+    ib --> bi["std::basic_ios<CharT>"]
+    bi --> bis["std::basic_istream"]
+    bi --> bos["std::basic_ostream"]
+    bis --> ifs["std::ifstream"]
+    bos --> ofs["std::ofstream"]
+    bis --> iss["std::istringstream"]
+    bos --> oss["std::ostringstream"]
+
+    root --> std["标准流对象"]
+    std --> sci["std::cin"]
+    std --> sco["std::cout"]
+    std --> sce["std::cerr"]
+    std --> scl["std::clog"]
+
+    root --> state["流状态位 (state bits)"]
+    state --> gb["goodbit"]
+    state --> eb["eofbit"]
+    state --> fb["failbit"]
+    state --> bb["badbit"]
+    state --> sw["sync_with_stdio"]
+
+    root --> fmt["格式化操纵符"]
+    fmt --> f1["std::boolalpha"]
+    fmt --> f2["std::fixed / std::setprecision"]
+    fmt --> f3["std::setw / std::setfill"]
+    fmt --> f4["std::quoted"]
+    fmt --> f5["std::format (C++20) / std::print (C++23)"]
+
+    root --> exc["异常处理"]
+    exc --> t1["try / catch / throw"]
+    exc --> t2["栈展开 (stack unwinding)"]
+    exc --> t3["std::terminate / set_terminate"]
+    exc --> t4["function-try-block"]
+
+    root --> nex["noexcept"]
+    nex --> n1["noexcept 限定符"]
+    nex --> n2["noexcept(expr) 操作符"]
+
+    root --> sex["标准异常"]
+    sex --> e1["std::exception"]
+    sex --> e2["std::runtime_error"]
+    sex --> e3["std::logic_error"]
+    sex --> e4["std::bad_alloc"]
+    sex --> e5["std::out_of_range"]
+
+    root --> expected["std::expected (C++23)"]
+
+    %% Cross-links
+    state -. "通过 setstate 触发" .-> exc
+    fmt -. "作用于" .-> bos
+    nex -. "限定" .-> exc
+    expected -. "替代异常" .-> exc

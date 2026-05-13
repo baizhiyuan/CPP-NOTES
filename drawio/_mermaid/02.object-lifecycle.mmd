@@ -1,0 +1,50 @@
+%% Module 02 · 对象生命周期与内存 (Object Lifecycle) — chapters 07, 08, 11
+graph TD
+    root["对象生命周期 (Object Lifecycle)"]
+
+    root --> dur["存储期 (storage duration)"]
+    dur --> d1["自动 (automatic / 栈)"]
+    dur --> d2["静态 (static)"]
+    dur --> d3["线程 (thread_local)"]
+    dur --> d4["动态 (dynamic / 堆)"]
+
+    root --> alloc["动态分配"]
+    alloc --> nw["new / new[]"]
+    alloc --> dl["delete / delete[]"]
+    alloc --> pnw["placement new"]
+    alloc --> nt["std::nothrow"]
+
+    root --> sp["智能指针 (Smart Pointers)"]
+    sp --> up["std::unique_ptr"]
+    sp --> shp["std::shared_ptr"]
+    sp --> wp["std::weak_ptr"]
+    sp --> mk1["std::make_unique"]
+    sp --> mk2["std::make_shared"]
+    sp --> dd["custom deleter / default_delete"]
+    sp --> esf["enable_shared_from_this"]
+
+    root --> ctor["构造与析构链 (ctor/dtor chain)"]
+    ctor --> defc["默认构造"]
+    ctor --> cpc["拷贝构造"]
+    ctor --> mvc["移动构造 (C++11)"]
+    ctor --> dtor["析构 (栈展开顺序)"]
+
+    root --> raii["RAII 资源获取即初始化"]
+    raii --> rl["lock_guard / scoped_lock"]
+    raii --> rf["ifstream / fstream"]
+
+    root --> mv["移动语义"]
+    mv --> m1["std::move"]
+    mv --> m2["std::forward"]
+    mv --> m3["xvalue / prvalue"]
+
+    root --> elide["复制省略 (copy elision)"]
+    elide --> e1["RVO"]
+    elide --> e2["NRVO"]
+    elide --> e3["C++17 强制 prvalue 省略"]
+
+    %% Cross-links
+    alloc -. "驱动" .-> sp
+    ctor -. "实现" .-> raii
+    mv -. "替代复制" .-> ctor
+    elide -. "优化" .-> ctor

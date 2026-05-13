@@ -1,0 +1,49 @@
+%% Module 01 · 类型系统 (Type System) — chapters 02, 04
+graph TD
+    root["类型系统 (Type System)"]
+
+    root --> built["内建基本类型"]
+    built --> ints["整型 (int/short/long/long long)"]
+    built --> uints["无符号整型 (unsigned*)"]
+    built --> chars["字符型 (char/signed char/unsigned char/wchar_t/char8_t..char32_t)"]
+    built --> floats["浮点型 (float/double/long double)"]
+    built --> b["bool"]
+    built --> aliases["标准整型别名 (size_t/ptrdiff_t)"]
+
+    root --> compound["复合类型"]
+    compound --> ptr["指针 (*) 与 void*"]
+    compound --> ref["引用 (&) 左值引用 / 右值引用 (&&)"]
+    compound --> arr["数组 ([] 与多维)"]
+    compound --> nptr["nullptr / std::nullptr_t"]
+
+    root --> qual["cv 限定符"]
+    qual --> c1["const"]
+    qual --> c2["constexpr"]
+    qual --> c3["consteval (C++20)"]
+    qual --> c4["constinit (C++20)"]
+    qual --> c5["volatile"]
+
+    root --> deduce["类型推导"]
+    deduce --> a1["auto"]
+    deduce --> a2["decltype"]
+    deduce --> a3["decltype(auto)"]
+
+    root --> alias["类型别名"]
+    alias --> al1["typedef"]
+    alias --> al2["using (推荐)"]
+
+    root --> cast["命名转换"]
+    cast --> ca1["static_cast"]
+    cast --> ca2["dynamic_cast"]
+    cast --> ca3["reinterpret_cast"]
+    cast --> ca4["const_cast"]
+
+    root --> spaceship["三路比较 <=>"]
+    spaceship --> s1["std::strong_ordering"]
+    spaceship --> s2["std::weak_ordering"]
+    spaceship --> s3["std::partial_ordering"]
+
+    %% Cross-links
+    deduce -. "保留引用" .-> ref
+    qual -. "应用于" .-> compound
+    cast -. "实现" .-> spaceship

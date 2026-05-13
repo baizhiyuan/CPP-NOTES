@@ -1,0 +1,56 @@
+%% Module 05 · 模板与元编程 (Templates & Metaprogramming) — chapters 13, 14
+graph TD
+    root["模板与元编程 (Templates & Meta)"]
+
+    root --> kinds["模板种类"]
+    kinds --> ft["函数模板 (function template)"]
+    kinds --> ct["类模板 (class template)"]
+    kinds --> mt["成员模板 (member template)"]
+    kinds --> vt["变量模板 (variable template, C++14)"]
+    kinds --> at["别名模板 (alias template, using)"]
+
+    root --> params["模板参数"]
+    params --> tp["类型参数 (typename/class)"]
+    params --> nttp["非类型参数 (NTTP)"]
+    params --> tt["模板模板参数"]
+    params --> vp["变长参数包 (...) / sizeof..."]
+
+    root --> spec["实例化与特化"]
+    spec --> ei["显式实例化 (template void f<int>())"]
+    spec --> et["extern template"]
+    spec --> fs["完全特化 (template<>)"]
+    spec --> ps["偏特化 (partial specialization)"]
+
+    root --> ctad["CTAD 类模板实参推导 (C++17)"]
+    ctad --> dg["deduction guide 推导指引"]
+
+    root --> sfinae["SFINAE 替换失败非错误"]
+    sfinae --> ei2["std::enable_if / enable_if_t"]
+    sfinae --> vt2["std::void_t (C++17)"]
+    sfinae --> td["tag dispatch"]
+
+    root --> concepts["concept / requires (C++20)"]
+    concepts --> rc["requires 从句"]
+    concepts --> re["requires 表达式"]
+    concepts --> cl["concept 定义"]
+
+    root --> fwd["完美转发"]
+    fwd --> ur["万能/转发引用 (T&&)"]
+    fwd --> rc2["引用折叠"]
+    fwd --> fw["std::forward"]
+
+    root --> fold["折叠表达式 (C++17)"]
+
+    root --> tmp["TMP 模板元编程"]
+    tmp --> tr["<type_traits>"]
+    tmp --> ic["std::integral_constant"]
+    tmp --> ifc["if constexpr (C++17)"]
+    tmp --> ce["constexpr / consteval 函数"]
+
+    root --> lt["lambda 模板 (C++20)"]
+
+    %% Cross-links
+    fwd -. "支撑" .-> vp
+    sfinae -. "被概念替代" .-> concepts
+    spec -. "驱动" .-> tmp
+    ctad -. "简化" .-> ct

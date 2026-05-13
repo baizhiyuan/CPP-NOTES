@@ -1,0 +1,61 @@
+%% Module 04 · 类与继承 (Classes & Inheritance) — chapters 11, 12
+graph TD
+    root["类与面向对象 (Classes & OOP)"]
+
+    root --> decl["类定义"]
+    decl --> s["struct (默认 public)"]
+    decl --> c["class (默认 private)"]
+    decl --> incl["不完整类型 (incomplete type)"]
+
+    root --> mem["成员"]
+    mem --> dm["数据成员 (含 mutable / static / inline static)"]
+    mem --> mf["成员函数 (含 const / ref-qualified)"]
+    mem --> ctor["构造函数 (默认/拷贝/移动)"]
+    mem --> dtor["析构函数"]
+    mem --> asg["拷贝赋值 / 移动赋值"]
+    mem --> mp["成员指针 .* / ->*"]
+
+    root --> acc["访问控制"]
+    acc --> p1["public"]
+    acc --> p2["protected"]
+    acc --> p3["private"]
+    acc --> fr["friend (类/函数/模板)"]
+
+    root --> spec["特殊成员管理"]
+    spec --> df["= default"]
+    spec --> dl["= delete"]
+    spec --> mil["成员初始化列表"]
+    spec --> deleg["委托构造 (delegating ctor)"]
+
+    root --> inh["继承"]
+    inh --> ip["public 继承 (is-a)"]
+    inh --> iprot["protected 继承"]
+    inh --> ipriv["private 继承 (实现继承)"]
+    inh --> slc["对象切片 (slicing)"]
+    inh --> mi["多重继承"]
+    inh --> vinh["虚继承 / 虚基类"]
+    inh --> diam["菱形问题 (diamond)"]
+
+    root --> poly["多态"]
+    poly --> v1["virtual"]
+    poly --> v2["override / final"]
+    poly --> v3["pure virtual (= 0)"]
+    poly --> v4["abstract class"]
+    poly --> v5["vtable / vptr"]
+    poly --> v6["virtual destructor"]
+
+    root --> rtti["RTTI"]
+    rtti --> dc["dynamic_cast"]
+    rtti --> ti["typeid / std::type_info"]
+
+    root --> op["运算符重载"]
+    op --> o1["成员 vs 非成员"]
+    op --> o2["转换运算符 / explicit"]
+    op --> o3["<=> 与 = default 比较 (C++20)"]
+
+    root --> crtp["CRTP 奇异递归模板模式"]
+
+    %% Cross-links
+    ctor -. "形成 RAII" .-> dtor
+    inh -. "启用" .-> poly
+    poly -. "依赖" .-> rtti

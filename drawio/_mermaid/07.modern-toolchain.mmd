@@ -1,0 +1,67 @@
+%% Module 07 · 现代工具链 (Modern Toolchain) — cross-cutting chapters 02–15
+graph TD
+    root["现代工具链 (Modern Toolchain)"]
+
+    root --> std17["C++17 特性"]
+    std17 --> a1["结构化绑定 (structured binding)"]
+    std17 --> a2["if constexpr"]
+    std17 --> a3["if/switch-init"]
+    std17 --> a4["内联变量 (inline variable)"]
+    std17 --> a5["CTAD"]
+    std17 --> a6["std::variant / optional / any"]
+    std17 --> a7["std::filesystem"]
+    std17 --> a8["std::string_view"]
+    std17 --> a9["折叠表达式 fold expression"]
+
+    root --> std20["C++20 特性"]
+    std20 --> b1["concept / requires"]
+    std20 --> b2["三路比较 <=>"]
+    std20 --> b3["ranges 与 views"]
+    std20 --> b4["modules"]
+    std20 --> b5["coroutine"]
+    std20 --> b6["std::format"]
+    std20 --> b7["std::span"]
+    std20 --> b8["consteval / constinit"]
+
+    root --> std23["C++23 特性"]
+    std23 --> c1["std::print / println"]
+    std23 --> c2["std::expected"]
+    std23 --> c3["显式 this (deducing this)"]
+    std23 --> c4["std::mdspan"]
+    std23 --> c5["std::stacktrace"]
+
+    root --> cmp["编译器"]
+    cmp --> cc1["gcc / g++"]
+    cmp --> cc2["clang / clang++"]
+    cmp --> cc3["MSVC"]
+
+    root --> tools["在线分析工具"]
+    tools --> tg["godbolt Compiler Explorer"]
+    tools --> ti["cppinsights.io"]
+    tools --> tq["quick-bench"]
+
+    root --> build["构建系统"]
+    build --> bm["CMake"]
+    build --> bn["Ninja"]
+    build --> bp["pkg-config / vcpkg / conan"]
+
+    root --> san["运行时净化"]
+    san --> sa["AddressSanitizer (ASan)"]
+    san --> sb["UBSan"]
+    san --> sc["ThreadSanitizer (TSan)"]
+    san --> sd["MemorySanitizer (MSan)"]
+
+    root --> lint["静态分析"]
+    lint --> l1["clang-tidy"]
+    lint --> l2["cppcheck"]
+    lint --> l3["include-what-you-use"]
+
+    root --> fmt["代码格式化"]
+    fmt --> fm["clang-format"]
+
+    %% Cross-links
+    std17 -. "演进至" .-> std20
+    std20 -. "演进至" .-> std23
+    cmp -. "驱动" .-> tools
+    build -. "调用" .-> cmp
+    san -. "辅助" .-> build
