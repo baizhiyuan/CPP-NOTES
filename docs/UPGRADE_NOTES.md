@@ -7,26 +7,31 @@
 
 ---
 
-## 1. 已完成（落在 `upgrade` 分支）
+## 1. 已完成（落在 `upgrade` 分支，共 9 个 commit）
 
 | Phase | 输出 | Commit | 状态 |
 |---|---|---|---|
 | A | `legacy` + `upgrade` 分支均指向 `d204347` | — | ✅ |
-| A.5 | 4 个验证脚本 (`title_fidelity.py` / `audit_chapter.py` / `check_links.py` / `anchor_set.py`) + `verify_all.sh` 编排器 | `e22a5e3` (+ pending: anchor_set 扩展 + verify_all) | ✅ |
-| B | 开源配套 (LICENSE MIT / CONTRIBUTING / CoC 2.1 / Issue+PR 模板 / .gitignore) | `287d0eb` (+ pending: `.omc/` ignore) | ✅ |
+| A.5 | 4 验证脚本 (`title_fidelity.py` / `audit_chapter.py` / `check_links.py` / `anchor_set.py`) | `e22a5e3` | ✅ |
+| B | 开源配套 (LICENSE MIT / CONTRIBUTING / CoC 2.1 / Issue+PR 模板 / .gitignore) | `287d0eb` + `d4edab6`(fix) | ✅ |
 | C0 | mermaid-cli WSL smoke test PASS (10.7KB SVG via Chromium) | — | ✅ |
-| B0-1 | `drawio/CONCEPTS.md` 304 行（72 术语 + 14 章 ID 白名单 + 9 模块拓扑 + godbolt 链接公约 + 32 条概念交叉索引种子） | `a1a320d` | ✅ |
-| C | 8 张 drawio 模块图：mermaid `.mmd` canonical (484 行) + SVG 导出（每张 60-100KB）+ `drawio/README.md` | `e738bbe` | ✅ |
-| B0-2 | Ch02 Manual-style 金样：386 → 718 行，fidelity 1.0，title 100%，10 个 WG21 paper 引用 | `aebc152` | ✅ |
-| E (skeleton) | `docs/KNOWLEDGE_MAP.md` 243 行（9 模块表 + 14 章节摘要 + 50 条交叉索引 + 3 条学习路径） | pending commit | 🟡 待 commit |
-| G (draft) | 新 README.md（徽章 + 章节索引 URL-encode + 资源入口 + 致谢） | pending commit | 🟡 待 commit |
+| B0-1 | `drawio/CONCEPTS.md` 304 行（72 术语 + 14 章 ID 白名单 + 9 模块拓扑 + godbolt 公约 + 32 交叉索引种子） | `a1a320d` | ✅ |
+| C | 8 张 drawio 模块图：mermaid `.mmd` canonical (484 行) + 8 个 SVG (60-100KB) + `drawio/README.md` | `e738bbe` | ✅ |
+| B0-2 | **Ch02 Manual** 金样：386 → **718 行**，fidelity 1.0，title 100%，10 个 WG21 paper 引用 | `aebc152` | ✅ |
+| B0-3 | **Ch09 Quickref** 金样：1363 → **1808 行**，fidelity 1.0，title 100%，18 张速查表 + 5 godbolt | `d726a81` | ✅ |
+| B0-4 | **Ch13 Principle** 金样（stub 扩写）：352 → **1474 行**，fidelity 1.0，title 100%，10 WG21 paper | `185bfc6` | ✅ |
+| E (skeleton) | `docs/KNOWLEDGE_MAP.md` 243 行（9 模块表 + 14 章摘要 + 50 交叉索引 + 3 学习路径） | `f61752c` | 🟡 final pass 待跑 |
+| F (chrome) | `docs/CPP-NOTES.html` 366 行 / 20KB（侧栏 / 主题 / 搜索 / mermaid+Prism / 14 占位 section） | `f61752c` | 🟡 章节内容嵌入待 Phase F final |
+| G | `README.md` 改写（徽章 / 14 章节 URL-encode 索引 / 资源入口 / AC-README-TOC 通过） | `f61752c` | ✅ |
+| Phase H draft | 本文件 (`docs/UPGRADE_NOTES.md`) | `f61752c` | ✅ |
+
+**verify_all.sh 结果：43 / 44 PASS**（唯一未过：legacy chapter/10 嵌的 Windows 绝对路径图，pre-existing 数据问题，将在 Phase D Ch10 升级时清理）
 
 ## 2. 进行中（agents 后台）
 
 | Phase | 文件 | 状态 |
 |---|---|---|
-| B0-3 | `chapter/09.第九章：序列与关联容器.md` Quickref-style 金样 | 🔄 后台运行 |
-| B0-4 | `chapter/13.第十三章：模板.md` Principle-style 金样（stub 扩写 352→≥800） | 🔄 后台运行 |
+| D-pilot | `chapter/14.第十四章：元编程.md` Principle-style 扩写（87→≥600） | 🔄 后台运行 |
 
 ## 3. 已设计但**未在本次 autopilot 中执行**
 
