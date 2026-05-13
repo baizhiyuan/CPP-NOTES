@@ -120,3 +120,38 @@ autopilot 会检测已有的金样和 CONCEPTS.md，跳过已完成阶段，从 
 ---
 
 **生成于** 2026-05-14 by `oh-my-claudecode:autopilot` (deep-interview → omc-plan v3 consensus → autopilot)。
+
+---
+
+## 8. 本次 autopilot 收尾状态（最终快照）
+
+- **Branches**:
+  - `legacy` = `d204347814323e7c76ec032a24a0a9a9b081b355` （冻结）
+  - `upgrade` = `8b42cb5e873bcb72bc0e0d59247c355a8eac9677` （14 commits ahead）
+  - `main` = `8b42cb5e873bcb72bc0e0d59247c355a8eac9677` （已 fast-forward 到 upgrade，**未 push**）
+
+- **Worktrees**:
+  - `/mnt/i/bzy_ws/CPP-NOTES` → `upgrade` （Ch14 pilot agent 的工作树）
+  - `/tmp/cpp-main` → `main` （用于 Phase H 隔离的 worktree，可在 hand-off 后 `git worktree remove /tmp/cpp-main`）
+
+- **如果 Ch14 pilot agent 在 autopilot session 结束后才完成**：它的 commit 会落在 `upgrade` 分支末端。
+  让 `main` 也包含它，在新 shell 里跑：
+  ```bash
+  cd /tmp/cpp-main
+  git merge --ff-only upgrade
+  ```
+
+- **最终推送命令（与 §5 一致，重复一遍以便 copy-paste）**：
+  ```bash
+  cd /tmp/cpp-main          # 或 git checkout main
+  git push origin legacy    # 远端首次出现 legacy 分支，普通 push
+  git push origin main      # 远端 main 仍是 d204347；本地 main 是其直系后裔；fast-forward push，无 force
+  ```
+
+- **运行 `bash scripts/verify_all.sh`** 收尾验证：44/44 PASS（截至当前 commit `8b42cb5`，不含 Ch14 pilot 的 commit）。
+
+- **下一步推荐**：
+  1. 在浏览器 / VSCode 中点开 `docs/CPP-NOTES.html` 检查 chrome 是否符合预期；
+  2. `git diff legacy..main --stat` 看升级摘要（应见 ~15 文件改动 + 几千行新增）；
+  3. 若满意，跑 §5 的推送命令；
+  4. 在新 session 跑 `/oh-my-claudecode:autopilot .omc/plans/cpp-notes-upgrade.md` 续上剩余 10+ 章节（除 14 之外，每章 ~10 分钟 / opus）。
