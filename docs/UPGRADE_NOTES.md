@@ -1,0 +1,117 @@
+# Upgrade Notes · 升级状态与 Hand-off
+
+> 由 `oh-my-claudecode:autopilot` 自动生成。记录本次 deep-interview → omc-plan consensus → autopilot 三段式升级管道的实际产出、剩余工作、以及推送命令。
+>
+> Source plan: `.omc/plans/cpp-notes-upgrade.md`（v3 共识版，Architect REVISE + Critic APPROVE-WITH-MINOR）
+> Source spec: `.omc/specs/deep-interview-cpp-notes-upgrade.md`（歧义度 10%）
+
+---
+
+## 1. 已完成（落在 `upgrade` 分支）
+
+| Phase | 输出 | Commit | 状态 |
+|---|---|---|---|
+| A | `legacy` + `upgrade` 分支均指向 `d204347` | — | ✅ |
+| A.5 | 4 个验证脚本 (`title_fidelity.py` / `audit_chapter.py` / `check_links.py` / `anchor_set.py`) + `verify_all.sh` 编排器 | `e22a5e3` (+ pending: anchor_set 扩展 + verify_all) | ✅ |
+| B | 开源配套 (LICENSE MIT / CONTRIBUTING / CoC 2.1 / Issue+PR 模板 / .gitignore) | `287d0eb` (+ pending: `.omc/` ignore) | ✅ |
+| C0 | mermaid-cli WSL smoke test PASS (10.7KB SVG via Chromium) | — | ✅ |
+| B0-1 | `drawio/CONCEPTS.md` 304 行（72 术语 + 14 章 ID 白名单 + 9 模块拓扑 + godbolt 链接公约 + 32 条概念交叉索引种子） | `a1a320d` | ✅ |
+| C | 8 张 drawio 模块图：mermaid `.mmd` canonical (484 行) + SVG 导出（每张 60-100KB）+ `drawio/README.md` | `e738bbe` | ✅ |
+| B0-2 | Ch02 Manual-style 金样：386 → 718 行，fidelity 1.0，title 100%，10 个 WG21 paper 引用 | `aebc152` | ✅ |
+| E (skeleton) | `docs/KNOWLEDGE_MAP.md` 243 行（9 模块表 + 14 章节摘要 + 50 条交叉索引 + 3 条学习路径） | pending commit | 🟡 待 commit |
+| G (draft) | 新 README.md（徽章 + 章节索引 URL-encode + 资源入口 + 致谢） | pending commit | 🟡 待 commit |
+
+## 2. 进行中（agents 后台）
+
+| Phase | 文件 | 状态 |
+|---|---|---|
+| B0-3 | `chapter/09.第九章：序列与关联容器.md` Quickref-style 金样 | 🔄 后台运行 |
+| B0-4 | `chapter/13.第十三章：模板.md` Principle-style 金样（stub 扩写 352→≥800） | 🔄 后台运行 |
+
+## 3. 已设计但**未在本次 autopilot 中执行**
+
+> 出于上下文预算与时间考虑，下列阶段保留完整提示词模板和分发策略，但**未跑全**。可由后续 session 接力（指令：`autopilot .omc/plans/cpp-notes-upgrade.md`）。
+
+| Phase | 范围 | 预计耗时 |
+|---|---|---|
+| **D**（11 章其余精修） | Ch03 / Ch04 / Ch05 / Ch06 / Ch07 / Ch08 / Ch10 / Ch11 / Ch12 / Ch14 / Ch15 | 11 × ~8-15 分钟 |
+| **D-review** | 独立 audit agent 对 14 章逐一评 fidelity，失败重跑 | ~30 分钟 |
+| **F** | `docs/CPP-NOTES.html` 单文件巨页（含 Mermaid CDN / Prism / Lunr / Theme toggle / 14 章嵌入） | ~30-60 分钟 |
+| **E final** | KNOWLEDGE_MAP §3 重写（结合 D 后的真实关键 API + 难度评分） | ~10 分钟 |
+| **H push** | 用户手动执行（见下节） | — |
+
+## 4. 验证现状
+
+跑 `bash scripts/verify_all.sh -v` 当前结果（部分项目尚未完成时的预期）：
+
+```
+title_fidelity: chapter/02.* ✅  其它 13 个（含 09/13 升级前）= legacy 100% 匹配自己（trivially pass）
+audit_chapter:  chapter/02.* ✅  其它 13 个 = legacy 与自己一致 = pass
+check_links:    README.md 22/23 通过，仅 docs/CPP-NOTES.html 待 Phase F 落地
+README TOC:     legacy 14 章节锚文本 ⊂ 新 README ✅
+drawio SVG:     8/8 XML 解析通过 ✅
+branch:         legacy = d204347 ✅；reflog 无 push ✅
+```
+
+## 5. Hand-off：用户手动推送
+
+**在执行推送前请确认 `git log --graph --oneline --all` 看分支拓扑、`git diff legacy..main --stat` 看升级摘要**。
+
+```bash
+cd /mnt/i/bzy_ws/CPP-NOTES
+
+# 步骤 1：把 upgrade 分支 fast-forward 到 main（本地操作，无 force）
+git checkout main
+git merge --ff-only upgrade
+
+# 步骤 2：清理 worktree（如果有）
+git worktree list
+git worktree prune
+
+# 步骤 3：推送两个分支到 GitHub（普通 push，无 --force-with-lease）
+# legacy 分支是 GitHub 首次出现，远端 main 仍是 d204347（== 本地 legacy）
+git push origin legacy
+
+# main 分支是 d204347 的直系后代，fast-forward push，零 force
+git push origin main
+
+# 步骤 4（可选）：删除本地 upgrade 分支
+git branch -d upgrade
+
+# 步骤 5（可选）：启用 GitHub Pages
+#   Settings → Pages → Source = main, /docs
+#   访问 https://baizhiyuan.github.io/CPP-NOTES/CPP-NOTES.html
+```
+
+## 6. 后续接力策略
+
+### Option A · 一次性把剩余 11 章升完
+```bash
+# 在新 session 里跑：
+/oh-my-claudecode:autopilot .omc/plans/cpp-notes-upgrade.md
+```
+autopilot 会检测已有的金样和 CONCEPTS.md，跳过已完成阶段，从 Phase D 继续。
+
+### Option B · 增量升级，每周 1-2 章
+按 `chapter/XX.*.md` 顺序，每次 issue 一个 `chXX` 的 PR：
+1. `/oh-my-claudecode:executor "用顶尖 C++ 专家身份重写 chapter/06.*.md，金样参考 chapter/02.*.md（Manual）"`
+2. 跑 `bash scripts/verify_all.sh`
+3. commit `docs(ch06): rewrite with handbook structure`
+
+### Option C · 只产出 HTML 站，章节维持现状
+若不再升级章节，直接 dispatch 一个 Phase F agent：
+```
+/oh-my-claudecode:executor "按 .omc/plans/cpp-notes-upgrade.md Phase F 规范，把所有 chapter/*.md 嵌入 docs/CPP-NOTES.html，参考 /mnt/i/bzy_ws/docs/claude-code/claude-code-setup.html"
+```
+
+## 7. 已知约束与设计选择
+
+- **远端 main 不会被 force 覆写**：本地 `main` 始终 == `d204347` 直到 Phase H 步骤 1 才 fast-forward。
+- **drawio 文件夹名保留**为兑现「需要一个专门的 drawio 文件夹」原话，但 canonical 源是 mermaid `.mmd`；想可视化编辑请把 `.mmd` 粘到 https://mermaid.live。
+- **章节文件名全角冒号 U+FF1A 保留不动**，所有跨链接 URL-encode 成 `%EF%BC%9A`。
+- **代码示例不强制可编译**，但要求 C++17 语法正确 + 重点示例 godbolt 全参数链接（防 client.gd 短链 rot）。
+- **金样三章** (Ch02 / Ch09 / Ch13) 作为 Manual / Quickref / Principle 三个写作模板的锚点，后续 11 章 agent prompt 必读这三章作为 in-context 参考。
+
+---
+
+**生成于** 2026-05-14 by `oh-my-claudecode:autopilot` (deep-interview → omc-plan v3 consensus → autopilot)。

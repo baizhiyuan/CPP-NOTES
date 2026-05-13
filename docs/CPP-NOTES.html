@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BZY C++ Notes · 现代 C++ 工程师手册</title>
+<meta name="description" content="C++ Primer 5e 骨架 + C++17 主线 + C++20/23 实务的速查手册，单文件离线版">
+
+<!-- mermaid for inline diagrams -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<!-- marked for runtime MD → HTML -->
+<script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+<!-- Prism for code highlighting -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29/themes/prism-tomorrow.min.css" id="prism-theme">
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<style>
+:root{
+  --bg-body:#f7f9fc;
+  --bg-primary:#ffffff;
+  --bg-secondary:#f1f5f9;
+  --bg-tertiary:#e2e8f0;
+  --bg-code:#1e1e2e;
+  --text-primary:#0f172a;
+  --text-secondary:#475569;
+  --text-muted:#64748b;
+  --accent-primary:#0369a1;
+  --accent-secondary:#0891b2;
+  --accent-green:#16a34a;
+  --accent-orange:#ea580c;
+  --accent-purple:#7e22ce;
+  --accent-red:#dc2626;
+  --border-color:#e2e8f0;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 6px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 25px rgba(0,0,0,.08);
+  --radius-sm:6px; --radius-md:8px; --radius-lg:12px;
+  --sidebar-w:300px;
+}
+[data-theme="dark"]{
+  --bg-body:#0f172a; --bg-primary:#1e293b; --bg-secondary:#334155; --bg-tertiary:#475569;
+  --bg-code:#0a0a14; --text-primary:#e2e8f0; --text-secondary:#cbd5e1; --text-muted:#94a3b8;
+  --accent-primary:#38bdf8; --border-color:#334155;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  background:var(--bg-body); color:var(--text-primary);
+  line-height:1.78; font-size:15px;
+  transition:background .2s, color .2s;
+}
+
+/* Layout */
+.layout{display:flex; min-height:100vh;}
+.sidebar{
+  width:var(--sidebar-w);
+  background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%);
+  color:#cbd5e1; position:sticky; top:0; height:100vh;
+  overflow-y:auto; flex-shrink:0; padding:20px 14px;
+}
+[data-theme="dark"] .sidebar{ background:linear-gradient(180deg,#020617 0%,#0f172a 100%); }
+.sidebar::-webkit-scrollbar{width:6px;}
+.sidebar::-webkit-scrollbar-thumb{background:#334155;border-radius:3px;}
+.sidebar-brand{
+  color:#fff; font-weight:700; font-size:1.02rem;
+  padding:6px 12px 14px 12px;
+  border-bottom:1px solid #334155; margin-bottom:14px;
+}
+.sidebar-brand-sub{display:block;font-weight:400;font-size:.76rem;color:#94a3b8;margin-top:4px;}
+.search-box{
+  margin:8px 12px 14px 12px; position:relative;
+}
+.search-box input{
+  width:100%; padding:7px 10px 7px 30px; background:#1e293b; border:1px solid #334155;
+  color:#e2e8f0; border-radius:var(--radius-sm); font-size:.84rem; outline:none;
+}
+.search-box input:focus{ border-color:var(--accent-primary); }
+.search-box::before{ content:"🔍"; position:absolute; left:10px; top:6px; font-size:.85rem; opacity:.6; }
+.nav-group{margin-bottom:14px;}
+.nav-group-title{
+  font-size:.7rem; text-transform:uppercase; letter-spacing:.06em;
+  color:#64748b; padding:0 12px; margin-bottom:5px; font-weight:600;
+}
+.nav-link{
+  display:flex; align-items:center; gap:8px;
+  padding:7px 12px; border-radius:var(--radius-sm);
+  color:#cbd5e1; text-decoration:none; font-size:.84rem;
+  margin-bottom:2px; transition:all .15s;
+  cursor:pointer;
+}
+.nav-link:hover{background:#334155;color:#fff;}
+.nav-link.active{background:var(--accent-primary);color:#fff;font-weight:600;}
+.nav-link-num{
+  width:22px;height:22px; background:rgba(148,163,184,.2);
+  border-radius:4px; display:flex; align-items:center; justify-content:center;
+  font-size:.7rem; font-weight:600; flex-shrink:0;
+}
+.nav-link.active .nav-link-num{background:rgba(255,255,255,.25);}
+.nav-link.hidden{display:none;}
+
+.theme-toggle{
+  position:fixed; bottom:18px; right:18px; z-index:10;
+  width:42px; height:42px; border-radius:50%;
+  background:var(--bg-primary); color:var(--text-primary);
+  border:1px solid var(--border-color); box-shadow:var(--shadow-lg);
+  cursor:pointer; font-size:1.1rem;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* Main content */
+.content{flex:1; min-width:0;}
+.content-inner{max-width:1024px; margin:0 auto; padding:36px 48px 64px 48px;}
+
+h1{ font-size:2rem; margin:0 0 .8em; color:var(--text-primary); }
+h2{ font-size:1.5rem; margin:2.2em 0 .6em; padding-bottom:.3em; border-bottom:2px solid var(--border-color); color:var(--text-primary); }
+h3{ font-size:1.2rem; margin:1.6em 0 .5em; color:var(--text-primary); }
+h4{ font-size:1.05rem; margin:1.2em 0 .4em; color:var(--text-secondary); }
+p{ margin:0 0 .8em; }
+ul,ol{ margin:0 0 .8em 1.4em; }
+li{ margin:.2em 0; }
+a{ color:var(--accent-primary); text-decoration:none; }
+a:hover{ text-decoration:underline; }
+code{
+  font-family:'SF Mono','Cascadia Code','Consolas',monospace;
+  font-size:.92em;
+  background:var(--bg-secondary); padding:.12em .35em; border-radius:4px;
+  color:var(--accent-red);
+}
+[data-theme="dark"] code{ color:#f472b6; background:var(--bg-tertiary); }
+pre{
+  background:var(--bg-code); color:#e2e8f0; padding:14px 18px;
+  border-radius:var(--radius-md); overflow-x:auto;
+  margin:.8em 0; font-size:.85em; position:relative;
+}
+pre code{ background:none; color:inherit; padding:0; font-size:1em; }
+table{ width:100%; border-collapse:collapse; margin:.8em 0; font-size:.92em; }
+th,td{ border:1px solid var(--border-color); padding:8px 10px; text-align:left; }
+th{ background:var(--bg-secondary); font-weight:600; }
+[data-theme="dark"] th{ background:var(--bg-tertiary); }
+blockquote{
+  border-left:4px solid var(--accent-primary); padding:6px 14px;
+  background:var(--bg-secondary); margin:.8em 0;
+  color:var(--text-secondary);
+}
+[data-theme="dark"] blockquote{ background:var(--bg-tertiary); }
+.mermaid{ background:var(--bg-primary); padding:12px; border-radius:var(--radius-md); text-align:center; }
+[data-theme="dark"] .mermaid{ background:#f5f5f5; }
+
+.callout{
+  border-left:4px solid var(--accent-orange); background:#fff7ed;
+  padding:10px 14px; border-radius:var(--radius-sm); margin:1em 0;
+}
+[data-theme="dark"] .callout{ background:#451a03; }
+
+.copy-btn{
+  position:absolute; top:6px; right:6px; padding:3px 8px;
+  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
+  color:#cbd5e1; border-radius:4px; font-size:.72rem; cursor:pointer;
+}
+.copy-btn:hover{ background:rgba(255,255,255,.18); }
+.copy-btn.copied{ color:#86efac; }
+
+.hero{
+  background:linear-gradient(135deg,var(--accent-primary) 0%,var(--accent-purple) 100%);
+  color:#fff; padding:36px 32px; border-radius:var(--radius-lg);
+  margin-bottom:36px;
+}
+.hero h1{ color:#fff; font-size:2.2rem; margin-bottom:.4em; }
+.hero p{ margin:0; opacity:.95; }
+.hero .badges{ margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; }
+.hero .badge{
+  background:rgba(255,255,255,.18); padding:3px 10px; border-radius:14px;
+  font-size:.78rem; font-weight:500;
+}
+.section-empty{
+  background:var(--bg-secondary); border:2px dashed var(--border-color);
+  padding:28px; border-radius:var(--radius-md); text-align:center;
+  color:var(--text-muted);
+}
+.chapter-section{ scroll-margin-top:20px; }
+.chapter-section h1{ border-bottom:3px solid var(--accent-primary); padding-bottom:8px; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    BZY C++ Notes
+    <span class="sidebar-brand-sub">现代 C++ 工程师手册 · 单文件版</span>
+  </div>
+  <div class="search-box">
+    <input type="text" id="search-input" placeholder="搜索章节...">
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-title">导航</div>
+    <a class="nav-link" href="#top"><span class="nav-link-num">⌂</span>顶部</a>
+    <a class="nav-link" href="#knowledge-map"><span class="nav-link-num">★</span>知识体系</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-title">14 章节（C++ Primer 5e 骨架）</div>
+    <a class="nav-link" href="#ch02"><span class="nav-link-num">02</span>对象与基本类型</a>
+    <a class="nav-link" href="#ch03"><span class="nav-link-num">03</span>数组、vector与字符串</a>
+    <a class="nav-link" href="#ch04"><span class="nav-link-num">04</span>表达式</a>
+    <a class="nav-link" href="#ch05"><span class="nav-link-num">05</span>语句</a>
+    <a class="nav-link" href="#ch06"><span class="nav-link-num">06</span>函数</a>
+    <a class="nav-link" href="#ch07"><span class="nav-link-num">07</span>深入 IO</a>
+    <a class="nav-link" href="#ch08"><span class="nav-link-num">08</span>动态内存管理</a>
+    <a class="nav-link" href="#ch09"><span class="nav-link-num">09</span>序列与关联容器</a>
+    <a class="nav-link" href="#ch10"><span class="nav-link-num">10</span>泛型算法</a>
+    <a class="nav-link" href="#ch11"><span class="nav-link-num">11</span>类</a>
+    <a class="nav-link" href="#ch12"><span class="nav-link-num">12</span>类的进阶</a>
+    <a class="nav-link" href="#ch13"><span class="nav-link-num">13</span>模板</a>
+    <a class="nav-link" href="#ch14"><span class="nav-link-num">14</span>元编程</a>
+    <a class="nav-link" href="#ch15"><span class="nav-link-num">15</span>其他工具与技术</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-title">其它</div>
+    <a class="nav-link" href="#upgrade-notes"><span class="nav-link-num">i</span>Upgrade Notes</a>
+    <a class="nav-link" href="https://github.com/baizhiyuan/CPP-NOTES" target="_blank"><span class="nav-link-num">⇲</span>GitHub Repo</a>
+  </div>
+</aside>
+
+<main class="content">
+<div class="content-inner" id="top">
+
+<section class="hero">
+  <h1>现代 C++ 工程师手册</h1>
+  <p>C++ Primer 5e 骨架 · C++17 主线 · C++20/23 实务补丁 · 14 章 + 9 模块图 · 单文件离线版</p>
+  <div class="badges">
+    <span class="badge">C++17 主线</span>
+    <span class="badge">C++20/23 补丁</span>
+    <span class="badge">MIT License</span>
+    <span class="badge">mermaid + drawio</span>
+  </div>
+</section>
+
+<section id="knowledge-map" class="chapter-section">
+  <h1>全局知识体系</h1>
+  <p>9 个模块概览，每章末尾会交叉链接到对应 <code>drawio/0X.svg</code>。详情见 <a href="./KNOWLEDGE_MAP.md">KNOWLEDGE_MAP.md</a>。</p>
+  <div class="mermaid">
+graph TD
+  M01[01 类型系统<br/>Ch02/Ch04]
+  M02[02 语句与控制流<br/>Ch04/Ch05]
+  M03[03 容器与字符串<br/>Ch03/Ch09]
+  M04[04 函数与算法<br/>Ch06/Ch10]
+  M05[05 内存与 IO<br/>Ch07/Ch08]
+  M06[06 类与 OOP<br/>Ch11/Ch12]
+  M07[07 模板与元编程<br/>Ch13/Ch14/Ch15]
+  M08[08 现代工具链<br/>跨章]
+
+  M01 --> M03
+  M01 --> M04
+  M02 --> M04
+  M03 --> M04
+  M01 --> M05
+  M03 --> M05
+  M01 --> M06
+  M04 --> M06
+  M06 --> M07
+  M04 --> M07
+  M08 -. 渗透每章 .-> M01
+  M08 -. .-> M03
+  M08 -. .-> M06
+  M08 -. .-> M07
+  </div>
+</section>
+
+<!-- 14 章节占位：每节内容由 Phase F final pass 填充 from chapter/XX.*.md -->
+<section id="ch02" class="chapter-section" data-chapter="02"><div class="section-empty">本章内容由 Phase F final pass 嵌入；当前仓库源在 <code>chapter/02.第二章：对象与基本类型.md</code>（已升级为 Manual 金样 718 行）。</div></section>
+<section id="ch03" class="chapter-section" data-chapter="03"><div class="section-empty">本章源在 <code>chapter/03.第三章：数组、vector与字符串.md</code>。Phase D 升级版尚未生成（参见 UPGRADE_NOTES.md §3）。</div></section>
+<section id="ch04" class="chapter-section" data-chapter="04"><div class="section-empty">本章源在 <code>chapter/04.第四章：表达式.md</code>。Phase D 升级版尚未生成。</div></section>
+<section id="ch05" class="chapter-section" data-chapter="05"><div class="section-empty">本章源在 <code>chapter/05.第五章：语句.md</code>。Phase D 升级版尚未生成。</div></section>
+<section id="ch06" class="chapter-section" data-chapter="06"><div class="section-empty">本章源在 <code>chapter/06.第六章：函数.md</code>。Phase D 升级版尚未生成。</div></section>
+<section id="ch07" class="chapter-section" data-chapter="07"><div class="section-empty">本章源在 <code>chapter/07.第七章：深入IO.md</code>。Phase D 升级版尚未生成。</div></section>
+<section id="ch08" class="chapter-section" data-chapter="08"><div class="section-empty">本章源在 <code>chapter/08.第八章：动态内存管理.md</code>。Phase D 升级版尚未生成。</div></section>
+<section id="ch09" class="chapter-section" data-chapter="09"><div class="section-empty">本章源在 <code>chapter/09.第九章：序列与关联容器.md</code>（Quickref 金样升级中，commit 落地后内容会嵌入此处）。</div></section>
+<section id="ch10" class="chapter-section" data-chapter="10"><div class="section-empty">本章源在 <code>chapter/10.第十章：泛型算法.md</code>。Phase D 升级版尚未生成。</div></section>
+<section id="ch11" class="chapter-section" data-chapter="11"><div class="section-empty">本章源在 <code>chapter/11.第十一章：类.md</code>。Phase D 升级版尚未生成。</div></section>
+<section id="ch12" class="chapter-section" data-chapter="12"><div class="section-empty">本章源在 <code>chapter/12.第十二章：类的进阶.md</code>。Phase D 升级版尚未生成。</div></section>
+<section id="ch13" class="chapter-section" data-chapter="13"><div class="section-empty">本章源在 <code>chapter/13.第十三章：模板.md</code>（Principle 金样升级中）。</div></section>
+<section id="ch14" class="chapter-section" data-chapter="14"><div class="section-empty">本章源在 <code>chapter/14.第十四章：元编程.md</code>。Phase D 升级版尚未生成。</div></section>
+<section id="ch15" class="chapter-section" data-chapter="15"><div class="section-empty">本章源在 <code>chapter/15.第十五章：其他的工具与技术.md</code>。Phase D 升级版尚未生成。</div></section>
+
+<section id="upgrade-notes" class="chapter-section">
+  <h1>Upgrade Notes / 升级状态</h1>
+  <p>详见 <a href="./UPGRADE_NOTES.md">docs/UPGRADE_NOTES.md</a>：完成阶段、剩余工作、手动推送命令、后续接力策略。</p>
+  <div class="callout">
+    <strong>当前 HTML 状态</strong>：本文件为 Phase F 的 <em>chrome 骨架版</em>。所有侧栏导航、主题切换、客户端搜索、mermaid 渲染均工作；但 14 章正文需要由 Phase F final pass agent 把 <code>chapter/*.md</code> 内容嵌入对应 <code>&lt;section&gt;</code>。详情见 UPGRADE_NOTES.md §3 + §6 Option C。
+  </div>
+</section>
+
+</div>
+</main>
+</div>
+
+<button class="theme-toggle" id="theme-toggle" title="切换明/暗主题">🌓</button>
+
+<script>
+// theme toggle
+(function(){
+  const html = document.documentElement;
+  const stored = localStorage.getItem('cpp-notes-theme');
+  if (stored) html.setAttribute('data-theme', stored);
+  const btn = document.getElementById('theme-toggle');
+  btn.addEventListener('click', () => {
+    const cur = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', cur);
+    localStorage.setItem('cpp-notes-theme', cur);
+  });
+})();
+
+// mermaid init
+mermaid.initialize({ startOnLoad:true, theme:'default', securityLevel:'loose' });
+
+// sidebar search filter
+(function(){
+  const input = document.getElementById('search-input');
+  const links = document.querySelectorAll('.sidebar .nav-link');
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    links.forEach(a => {
+      const txt = a.textContent.toLowerCase();
+      a.classList.toggle('hidden', q.length > 0 && !txt.includes(q));
+    });
+  });
+})();
+
+// active section highlight on scroll
+(function(){
+  const links = Array.from(document.querySelectorAll('.sidebar .nav-link[href^="#"]'));
+  const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const ob = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => ob.observe(s));
+})();
+
+// copy-code button on every <pre>
+(function(){
+  document.querySelectorAll('pre').forEach(pre => {
+    const b = document.createElement('button');
+    b.className = 'copy-btn'; b.textContent = '复制';
+    b.addEventListener('click', () => {
+      const code = pre.querySelector('code') || pre;
+      navigator.clipboard.writeText(code.textContent || '').then(() => {
+        b.textContent = '已复制'; b.classList.add('copied');
+        setTimeout(() => { b.textContent = '复制'; b.classList.remove('copied'); }, 1500);
+      });
+    });
+    pre.appendChild(b);
+  });
+})();
+</script>
+</body>
+</html>

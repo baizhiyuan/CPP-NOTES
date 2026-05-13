@@ -17,15 +17,31 @@ from pathlib import Path
 
 
 HEADING_RE = re.compile(r"^(#{2,3})\s+(.+?)\s*$")
+# Markdown link text: capture the [text] portion of [text](url)
+LINK_RE = re.compile(r"\[([^\]\n]+)\]\([^)\s]+\)")
+
+
+def _strip_emoji_and_md(s: str) -> str:
+    # remove [text](url) wrapper to expose plain text inside headings
+    s = LINK_RE.sub(r"\1", s)
+    return s.strip()
 
 
 def extract(text: str) -> list[str]:
-    anchors: list[str] = []
+    """Extract anchor-like strings: ## / ### heading text AND any [text](url) link text.
+
+    Both are 'anchors' in different senses; legacy README uses '## [Title](path)'
+    style while the upgraded README puts chapter links in a table. Capturing both
+    forms keeps AC-README-TOC stable across reorganizations.
+    """
+    anchors: set[str] = set()
     for line in text.splitlines():
         m = HEADING_RE.match(line)
         if m:
-            anchors.append(m.group(2).strip())
-    return anchors
+            anchors.add(_strip_emoji_and_md(m.group(2)))
+        for link_text in LINK_RE.findall(line):
+            anchors.add(link_text.strip())
+    return sorted(anchors)
 
 
 def main(argv: list[str]) -> int:
