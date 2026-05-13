@@ -20,6 +20,16 @@ from pathlib import Path
 
 MD_LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 HTML_LINK = re.compile(r"""(?:href|src)\s*=\s*["']([^"']+)["']""")
+# Inline `code` spans and ```fenced``` blocks contain example markdown that
+# should not be treated as real links. We strip them before regex extraction.
+FENCED_RE = re.compile(r"```.*?```", re.DOTALL)
+INLINE_CODE_RE = re.compile(r"`[^`\n]*`")
+
+
+def strip_code(text: str) -> str:
+    text = FENCED_RE.sub("", text)
+    text = INLINE_CODE_RE.sub("", text)
+    return text
 
 
 def iter_files(target: Path):
@@ -34,7 +44,8 @@ def extract(path: Path) -> list[str]:
     text = path.read_text(encoding="utf-8")
     links: list[str] = []
     if path.suffix.lower() in {".md", ".markdown"}:
-        links.extend(MD_LINK.findall(text))
+        # strip fenced and inline code so example links inside docs don't false-positive
+        links.extend(MD_LINK.findall(strip_code(text)))
     if path.suffix.lower() in {".html", ".htm"}:
         links.extend(HTML_LINK.findall(text))
     return links
