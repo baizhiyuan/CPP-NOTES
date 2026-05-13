@@ -3,3 +3,14 @@
 /C++基础课程代码.md
 /二分查找BZY.md
 /多线程.md
+# autopilot upgrade additions
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/settings.json
+node_modules/
+__pycache__/
+*.pyc
+.omc/state/c0-smoke.log
